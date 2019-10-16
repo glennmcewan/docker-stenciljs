@@ -15,8 +15,7 @@ services:
   test:
     build:
       context: .
-      dockerfile: Dockerfile
-      target: test
+      dockerfile: Dockerfile.test
     volumes:
       - ./:/usr/src/app
       - /usr/src/app/node_modules
