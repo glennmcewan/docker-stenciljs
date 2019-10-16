@@ -16,6 +16,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.test
+      args:
+        USER_ID: ${USER_ID:-1337}
+        GROUP_ID: ${GROUP_ID:-1337}
+    cap_add:
+      - SYS_ADMIN
     volumes:
       - ./:/usr/src/app
       - /usr/src/app/node_modules
