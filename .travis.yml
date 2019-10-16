@@ -1,0 +1,33 @@
+language: node_js
+
+node_js:
+  - "10"
+services:
+  - docker
+
+before_install:
+  - export USER_ID="$(id -u)";export GROUP_ID="$(id -g)";
+
+install:
+  - cd "${TRAVIS_BUILD_DIR}"
+  - docker-compose run test npm run build
+  - sudo chgrp -R root "${TRAVIS_BUILD_DIR}"
+
+script:
+  - docker-compose run test
+
+before_deploy:
+  - sudo chown -R travis:travis "${TRAVIS_BUILD_DIR}/www"
+  - |
+    sed -i "s|href=\"/|href=\"/${TRAVIS_REPO_SLUG#*/}/|g" "${TRAVIS_BUILD_DIR}/www/index.html"
+  - |
+    sed -i "s|src=\"/|src=\"/${TRAVIS_REPO_SLUG#*/}/|g" "${TRAVIS_BUILD_DIR}/www/index.html"
+
+deploy:
+  provider: pages
+  local-dir: www
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  committer-from-gh: true
+  on:
+    branch: master
